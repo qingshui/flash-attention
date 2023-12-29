@@ -13,6 +13,24 @@ include_directories(
     ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
     )
 
+if (NOT DEFINED NVCC_ARCH_BIN)
+    message(FATAL_ERROR "NVCC_ARCH_BIN is not defined.")
+endif()
+
+if (NVCC_ARCH_BIN STREQUAL "")
+    message(FATAL_ERROR "NVCC_ARCH_BIN is not set.")
+endif()
+
+STRING(REPLACE "-" ";" FA_NVCC_ARCH_BIN ${NVCC_ARCH_BIN})
+
+set(FA_GENCODE_OPTION "SHELL:")
+foreach(arch ${FA_NVCC_ARCH_BIN})
+    if(${arch} GREATER_EQUAL 80)
+        set(FA_GENCODE_OPTION "${FA_GENCODE_OPTION} -gencode arch=compute_${arch},code=sm_${arch}")
+    endif()
+endforeach()
+message(STATUS "FA_GENCODE_OPTION=${FA_GENCODE_OPTION}")
+
 #file(GLOB SOURCES_CU "src/*.cu")
 #file(GLOB SOURCES_CPP "src/*.cpp")
 set(SOURCES_CU
@@ -47,10 +65,8 @@ target_compile_options(flashattn PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
      -Xcompiler="-O3"
      -Xcompiler="-DVERSION_GE_1_1" 
      -Xcompiler="-DVERSION_GE_1_3" 
-     -Xcompiler="-DDVERSION_GE_1_5" 
-     "SHELL:-gencode arch=compute_75,code=sm_75"
-     "SHELL:-gencode arch=compute_80,code=sm_80"
-     "SHELL:-gencode arch=compute_86,code=sm_86"
+     -Xcompiler="-DDVERSION_GE_1_5"
+     "${FA_GENCODE_OPTION}"
      -U__CUDA_NO_HALF_OPERATORS__ 
      -U__CUDA_NO_HALF_CONVERSIONS__ 
      -U__CUDA_NO_HALF2_OPERATORS__
