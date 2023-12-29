@@ -105,7 +105,7 @@ target_compile_options(flashattn PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
   -w
   -Xcompiler="-fPIC"
   -Xcompiler="-O3"
-  -std=c++17
+  -std=c++14
   -U__CUDA_NO_HALF_OPERATORS__
   -U__CUDA_NO_HALF_CONVERSIONS__
   -U__CUDA_NO_HALF2_OPERATORS__
@@ -120,7 +120,7 @@ target_compile_options(flashattn_with_bias_mask PRIVATE $<$<COMPILE_LANGUAGE:CUD
   -w
   -Xcompiler="-fPIC"
   -Xcompiler="-O3"
-  -std=c++17
+  -std=c++14
   -U__CUDA_NO_HALF_OPERATORS__
   -U__CUDA_NO_HALF_CONVERSIONS__
   -U__CUDA_NO_HALF2_OPERATORS__
